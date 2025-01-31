@@ -3,17 +3,22 @@ const socketIo = require("socket.io");
 const express = require("express");
 const path = require("node:path");
 
+const app = express();
+
 app.set("view engine","ejs");
-app.set(express.static(path.join(__dirname,"public")));
+console.log(path.join(__dirname,"public"))
+app.use(express.static(path.join(__dirname,"public")));
 app.get("/",(req,res)=>{
-    res.end("hello");
+    res.render("view");
 })
 
 const server = http.createServer(app);
 const io = socketIo(server);
 
 io.on("connection",(socket)=>{
-    console.log("a user connected");
+    socket.on("sendLocation",(data)=>{
+        io.emit("receiveLocation",{id:socket.id,...data});
+    })
 })
 
 server.listen(3000,() => {
