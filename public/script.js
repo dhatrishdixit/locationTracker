@@ -14,7 +14,7 @@ if(navigator.geolocation){
     )
 } 
 
-const map = L.map('map').setView([51.505, -0.09], 13);
+const map = L.map('map').setView([0, 0], 13);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: ' <a href="https://github.com/dhatrishdixit">Dhatrish Singh Dixit</a>'
@@ -24,6 +24,19 @@ const markers = {} ;
 
 socket.on("receiveLocation",(data)=>{
     const {id,latitude,longitude} = data;
-    map.setView([latitude,longitude],13);
-    L.marker([latitude,longitude]).addTo(map);
+    if(markers[id]){
+        markers[id].setLatLng([latitude,longitude]);
+        console.log("marker updated");
+    }
+    else{
+        markers[id] = L.marker([latitude,longitude]);
+        markers[id].addTo(map); 
+        map.setView([latitude,longitude],13);
+    }
+   
+})
+
+socket.on("removeMarker",(data)=>{
+    map.removeLayer(markers[data]);
+    delete markers[data];
 })

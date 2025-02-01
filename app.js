@@ -19,6 +19,10 @@ io.on("connection",(socket)=>{
     socket.on("sendLocation",(data)=>{
         io.emit("receiveLocation",{id:socket.id,...data});
     })
+
+    socket.on("disconnect",()=>{
+        io.emit("removeMarker",socket.id);
+    })
 })
 
 server.listen(3000,() => {
